@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime
 from typing import List
-from models import VKPost
+from app.models import VKPost
 
 def parse_vk_posts(api_key: str, group_id: int, count: int = 10) -> List[VKPost]:
     """Получает посты из VK и преобразует в VKPost модели"""

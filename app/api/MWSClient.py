@@ -1,7 +1,7 @@
 from typing import List, Type
 from fastapi import HTTPException
 import requests
-from app import Post
+from app.models import Post
 
 class MWSClient:
     BASE_URL = "https://tables.mws.ru/fusion/v1/datasheets"
@@ -84,7 +84,7 @@ class MWSClient:
                 return post
         return None
     
-    def filter_posts(self, posts: list[Post], cond: str, **filters):
+    def filter_posts(self, cond: str, **filters):
         self.refresh()
 
         ops = {
@@ -100,13 +100,18 @@ class MWSClient:
 
         op_func = ops[cond]
 
-        result = posts
+        result = self._post_db
         for field, value in filters.items():
             self.check_field(field)
             result = [p for p in result if op_func(getattr(p, field), value)]
 
         return result
-        
+
+    def sort_posts(self, field: str, limit: int = 10, descending: bool = True):
+        self.refresh()
+        sorted_posts = sorted(self._post_db, key=lambda p: getattr(p, field), reverse=descending)
+        return sorted_posts[:limit]
+
     def check_field(self, field: str):
-        if field not in self.model.model_field:
-            return HTTPException(400, f"Field '{field}' not exits")
+        if field not in self.model.model_fields:
+            raise HTTPException(400, f"Field '{field}' not exists")

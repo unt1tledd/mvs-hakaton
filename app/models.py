@@ -1,12 +1,18 @@
+from datetime import datetime
 from pydantic import BaseModel
 
-class PostStatistics(BaseModel):
-    post_id: str
+class Post(BaseModel):
+    post_id: int
     platform: str
-    url: str
     format: str
+    date: datetime
+
     likes: int = 0
-    views: int = 0
     shares: int = 0
     comment_count: int = 0
-    engagement_rate: float
+    views: int = 0
+
+class VKPost(Post):
+    owner_id: int
+    reposts: int = 0
+    polls_participation: int = 0

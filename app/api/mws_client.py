@@ -3,6 +3,7 @@ from fastapi import HTTPException
 import requests
 from app.models import Post
 
+
 class MWSClient:
     BASE_URL = "https://tables.mws.ru/fusion/v1/datasheets"
 
@@ -62,14 +63,14 @@ class MWSClient:
             raise HTTPException(resp.status_code, f"MWS Error: {js}")
 
         return js["data"]["records"][0]
-    
+
     def get_client(self):
         return self.model
 
     def get_posts(self):
         self.refresh()
         return self._post_db[:self.limit]
-    
+
     def refresh(self, force: bool = False):
         import time
         now = time.time()
@@ -83,7 +84,7 @@ class MWSClient:
             if post.post_id == post_id:
                 return post
         return None
-    
+
     def filter_posts(self, cond: str, **filters):
         self.refresh()
 
